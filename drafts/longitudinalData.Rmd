@@ -1,0 +1,279 @@
+```{r}
+library(tidycensus)
+library(sf)
+library(ggplot2)
+library(tigris)
+```
+
+```{r}
+census_api_key("0cc07f06386e317f312adef5e0892b0d002b7254")
+
+
+census_data_2010 <- get_acs(state = "WA", 
+        county = "King", 
+        geography = "tract", 
+        variables = c(total_pop1 = "B01003_001",
+                      male = "B01001_002",
+                      age = "B01002_001",
+                      gini = "B19083_001",
+                      med_income = "B06011_001", 
+                      food_stamps = "B07012_001",
+                      latinx = "B03001_003", 
+                      white = "B02001_002", 
+                      black = "B02001_003", 
+                      asian = "B02001_005",
+                      native = "B02001_004",
+                      immigrant = "B05012_003",
+                      highschool = "B15002_011",
+                      median_rent = "B25065_001"),
+        year = 2010,
+        output = "wide",
+        survey = "acs5",
+        geometry = TRUE) %>% 
+  dplyr::select(-c(NAME, ends_with("M"))) %>%
+  rename_at(vars(ends_with("E")), .funs = list(~str_sub(., end = -2))) %>%
+  filter(total_pop1 != 0)
+ 
+```
+
+
+```{r}
+census_api_key("0cc07f06386e317f312adef5e0892b0d002b7254")
+
+
+census_data_2011 <- get_acs(state = "WA", 
+        county = "King", 
+        geography = "tract", 
+        variables = c(total_pop1 = "B01003_001",
+                      male = "B01001_002",
+                      age = "B01002_001",
+                      gini = "B19083_001",
+                      med_income = "B06011_001", 
+                      food_stamps = "B07012_001",
+                      latinx = "B03001_003", 
+                      white = "B02001_002", 
+                      black = "B02001_003", 
+                      asian = "B02001_005",
+                      native = "B02001_004",
+                      immigrant = "B05012_003",
+                      highschool = "B15002_011",
+                      median_rent = "B25065_001"),
+        year = 2011,
+        output = "wide",
+        survey = "acs5",
+        geometry = TRUE) %>% 
+  dplyr::select(-c(NAME, ends_with("M"))) %>%
+  rename_at(vars(ends_with("E")), .funs = list(~str_sub(., end = -2))) %>%
+  filter(total_pop1 != 0) 
+ 
+```
+```{r}
+census_api_key("0cc07f06386e317f312adef5e0892b0d002b7254")
+
+
+census_data_2012 <- get_acs(state = "WA", 
+        county = "King", 
+        geography = "tract", 
+        variables = c(total_pop1 = "B01003_001",
+                      male = "B01001_002",
+                      age = "B01002_001",
+                      gini = "B19083_001",
+                      med_income = "B06011_001", 
+                      food_stamps = "B07012_001",
+                      latinx = "B03001_003", 
+                      white = "B02001_002", 
+                      black = "B02001_003", 
+                      asian = "B02001_005",
+                      native = "B02001_004",
+                      immigrant = "B05012_003",
+                      highschool = "B15002_011",
+                      median_rent = "B25065_001"),
+        year = 2012,
+        output = "wide",
+        survey = "acs5",
+        geometry = TRUE) %>% 
+  dplyr::select(-c(NAME, ends_with("M"))) %>%
+  rename_at(vars(ends_with("E")), .funs = list(~str_sub(., end = -2))) %>%
+  filter(total_pop1 != 0) 
+ 
+```
+
+```{r}
+census_api_key("0cc07f06386e317f312adef5e0892b0d002b7254")
+
+
+census_data_2013 <- get_acs(state = "WA", 
+        county = "King", 
+        geography = "tract", 
+        variables = c(total_pop1 = "B01003_001",
+                      male = "B01001_002",
+                      age = "B01002_001",
+                      gini = "B19083_001",
+                      med_income = "B06011_001", 
+                      food_stamps = "B07012_001",
+                      latinx = "B03001_003", 
+                      white = "B02001_002", 
+                      black = "B02001_003", 
+                      asian = "B02001_005",
+                      native = "B02001_004",
+                      immigrant = "B05012_003",
+                      highschool = "B15002_011",
+                      median_rent = "B25065_001"),
+        year = 2013,
+        output = "wide",
+        survey = "acs5",
+        geometry = TRUE) %>% 
+  dplyr::select(-c(NAME, ends_with("M"))) %>%
+  rename_at(vars(ends_with("E")), .funs = list(~str_sub(., end = -2))) %>%
+  filter(total_pop1 != 0) 
+ 
+```
+
+```{r}
+census_data_2010L <- census_data_2010 %>%
+  as_tibble() %>%
+  mutate(year="2010")
+census_data_2011L <- census_data_2011 %>%
+  as_tibble() %>%
+  mutate(year="2011")
+census_data_2012L <- census_data_2012 %>%
+  as_tibble() %>%
+  mutate(year="2012")
+census_data_2013L <- census_data_2013 %>%
+  as_tibble() %>%
+  mutate(year="2013")
+census_data_long <- rbind(census_data_2010L,census_data_2011L,census_data_2012L,census_data_2013L)
+
+census_data_long <- census_data_long %>%
+  as_tibble()
+```
+
+```{r}
+write.csv(census_data_long, "census_data_long.csv")
+```
+
+
+```{r}
+census_data_2010<-census_data_2010 %>% rename_at(vars(-GEOID, -geometry), ~ paste0(., '.2010'))
+census_data_2011<-census_data_2011 %>% rename_at(vars(-GEOID, -geometry), ~ paste0(., '.2011'))
+census_data_2012<-census_data_2012 %>% rename_at(vars(-GEOID, -geometry), ~ paste0(., '.2012'))
+census_data_2013<-census_data_2013 %>% rename_at(vars(-GEOID, -geometry), ~ paste0(., '.2013'))
+```
+
+```{r}
+geometries <- census_data_2013 %>% select(c(GEOID, geometry))
+#census_data_2010 <- st_set_geometry(census_data_2010, NULL)
+#census_data_2011 <- st_set_geometry(census_data_2011, NULL)
+#census_data_2012 <- st_set_geometry(census_data_2012, NULL)
+#census_data_2013 <- st_set_geometry(census_data_2013, NULL)
+```
+
+```{r}
+census_full <- merge(as.data.frame(census_data_2010), as.data.frame(census_data_2011) , by = "GEOID", duplicateGeoms = F)
+#census_full <- merge(census_full, as.data.frame(census_data_2011), by = "GEOID" )
+census_full <- merge(census_full, as.data.frame(census_data_2012), by = "GEOID", duplicateGeoms = F )
+census_full <- merge(census_full, as.data.frame(census_data_2013), by = "GEOID", duplicateGeoms = F )
+#census_full <- st_set_geometry(census_full, geometries$geometry)
+```
+```{r}
+census_full <- census_full[-c(16,31,46)]
+```
+
+```{r}
+census_full <- rename(census_full, geometry = geometry.y)
+
+```
+
+```{r}
+census_full <- st_set_geometry(census_full, "geometry")
+```
+
+```{r}
+water <- area_water(53, 033)
+```
+```{r}
+water_sub <- st_crop(water, st_bbox(drug_census_clean))
+
+water_sub <- filter(water_sub,AWATER>50000,AWATER<20000000, HYDROID!=110855770994, HYDROID != 110855771066, HYDROID !=110855771049)
+```
+
+```{r}
+highways <-roads(53, 033) 
+
+highways <- filter(highways, RTTYP=="I") 
+
+#highways <- filter(highways, LINEARID==11019642504321)
+```
+
+```{r}
+roads_sub <- st_crop(highways, st_bbox(drug_census_clean))
+```
+
+```{r}
+#pivot_longer(as.tibble(census_full), cols=-c("GEOID","geometry"), names_to = "variable", names_sep= ".", values_to = "value", names_repair = "unique")
+```
+
+```{r}
+drug_census_clean %>%
+  ggplot() + 
+  geom_sf(aes(fill = total_pop1)) +
+  geom_sf(data=roads_sub)+
+  geom_sf(data=water_sub %>% filter(AWATER > 50000, HYDROID!=	
+110855770994)) 
+  #geom_sf_text(label=drug_census_clean$GEOID)
+```
+
+```{r}
+#roads <- st_join(highways,drug_census_clean, join=st_touches)
+```
+
+```{r}
+#roads <- roads %>%
+ # drop_na() %>%
+  #filter(Year==2010)
+```
+
+
+```{r, include = TRUE}
+Queen <- poly2nb(drug_census_clean %>% filter(Year==2010), queen = TRUE)
+
+seattle_centroids <- st_centroid(st_geometry(drug_census_clean%>% filter(Year==2010)), of_largest_polygon = TRUE)
+#Brianna: this doesn't work
+nb_Q_net <- nb2lines(nb = Queen, coords = seattle_centroids, as_sf = TRUE)
+barriers <- if_else( (st_intersects(nb_Q_net, roads_sub %>% filter(RTTYP == 'I')) %>% lengths()) >= 1 | (st_intersects(nb_Q_net, water_sub) %>% lengths()) >= 1,0,1)
+
+nb_Q_net$wt <- barriers
+
+G <- nb_Q_net %>% as.data.frame() %>% dplyr::select(i,wt) %>% group_by(i) %>% 
+  summarize(wt = list(wt)) %>% ungroup() %>% pull(wt)
+
+W_adj <- nb2listw(Queen, glist = G)
+nb_net <- nb2lines(nb = Queen, coords = seattle_centroids, wts = G, 
+                   as_sf = TRUE)
+```
+
+```{r}
+drug_census_clean %>%
+  ggplot() + 
+  geom_sf(fill = 'white',color = 'grey') + 
+  geom_sf(data = seattle_centroids) +
+  geom_sf(data = nb_net,aes(color = as.factor(wt)))+
+  geom_sf(data=water_sub) +
+  geom_sf(data=roads_sub) +
+  theme_classic() +
+  labs(title= "Neighborhood Structure: Weighted Queen") +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_line("transparent"),
+        panel.background = element_blank(),
+        plot.title = element_text(color="black",  size = 15, face = "bold", hjust=.5),
+        legend.key.width = unit(.5, "in"),
+        legend.title = element_text(color="black", size = 12, face="bold",  hjust=.5),
+        legend.position = "bottom",
+        legend.direction="horizontal",
+        legend.text = element_text(color="black", size = 12, face="bold"))+
+    guides(fill = guide_colourbar(title = "Percent", title.position="top", hjust=.5)) +
+  scale_color_discrete(name="Highways:", labels=c("Crosses a Highway", "Doesn't Cross a Highway"))
+```
+
+
